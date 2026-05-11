@@ -38,6 +38,16 @@ def build_test_cases() -> List[TestCase]:
         TestCase("Empty string", "", []),
         TestCase("No PII present", "The weather is sunny today and the sky is blue.", []),
         TestCase("Non-PII numbers", "There are 42 apples and 7 oranges.", []),
+        TestCase("Hyphenated Credit Card", "Use my new visa, 453-2015678-901234, for the payment.", ["CREDIT_CARD"]),
+        TestCase("CVV detection", "The CVV code is 192 and expiration is 08-28.", ["CVV", "EXP_DATE"]),
+        TestCase("Complex financial block", "Card ending in 8,812. Visa 453-2015678-901234 exp 08-28 CVV192", ["CREDIT_CARD", "EXP_DATE", "CVV"]),
+        TestCase("Broken Email detection", "Send it to e.rodrigas88 fastmail.net please.", ["BROKEN_EMAIL"]),
+        TestCase("CVV false positive prevention", "My phone number is 555-012-777.", []),
+        TestCase("Spelled-out numbers", "My security code is four five three", ["SPELLED_NUM"]),
+        TestCase("Passport ID with context", "The passport number is AB1234567.", ["GOVT_ID"]),
+        TestCase("Zip code detection", "I live in Chicago, Illinois 60611.", ["LOCATION", "ZIP_CODE"]),
+        TestCase("Account ID detection", "My account ID is GH99281X.", ["ACCOUNT_NUM"]),
+        TestCase("Irregular phone format", "Reach me at 555-01288-877.", ["PHONE_NUMBER"]),
     ]
 
 

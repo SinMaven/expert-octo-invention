@@ -215,19 +215,38 @@ function displayResults(d) {
 
 function highlightPII(text, entities) {
     if (!entities || !entities.length) return `<p>${esc(text)}</p>`;
-    const sorted = [...entities].sort((a, b) => b.start - a.start);
-    let r = text;
+    
+    // Sort entities by start index
+    const sorted = [...entities].sort((a, b) => a.start - b.start);
+    
+    let html = "";
+    let lastIdx = 0;
+    
     for (const e of sorted) {
-        r = r.slice(0, e.start) +
-            `<span class="pii-tag" data-type="${e.type}" title="${e.type} (${(e.score*100).toFixed(0)}%)">${esc(r.slice(e.start, e.end))}</span>` +
-            r.slice(e.end);
+        // Skip if this entity overlaps with the previous one
+        if (e.start < lastIdx) continue;
+        
+        // Add text before the entity
+        html += esc(text.substring(lastIdx, e.start));
+        
+        // Add the highlighted entity
+        const entityText = text.substring(e.start, e.end);
+        html += `<span class="pii-tag" data-type="${e.type}" title="${e.type} (${(e.score*100).toFixed(0)}%)">${esc(entityText)}</span>`;
+        
+        lastIdx = e.end;
     }
-    return `<p>${r}</p>`;
+    
+    // Add remaining text
+    html += esc(text.substring(lastIdx));
+    
+    return `<p>${html}</p>`;
 }
 
 function typeVar(t) {
     return { PERSON:"person", PHONE_NUMBER:"phone", EMAIL_ADDRESS:"email", CREDIT_CARD:"credit",
-             US_SSN:"ssn", LOCATION:"location", DATE_TIME:"datetime", IP_ADDRESS:"ip" }[t] || "person";
+             US_SSN:"ssn", LOCATION:"location", DATE_TIME:"datetime", IP_ADDRESS:"ip", 
+             BROKEN_EMAIL:"email", GOVT_ID:"ssn", SPELLED_NUM:"credit",
+             ZIP_CODE:"location", ACCOUNT_NUM:"ssn" }[t] || "person";
 }
 
 function esc(s) {
