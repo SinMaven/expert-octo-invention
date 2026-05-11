@@ -1,6 +1,6 @@
 """
 Zero-Knowledge Voice -- FastAPI Web Server
-============================================
+===========================================
 Professional dashboard with REST + WebSocket endpoints.
 
 Endpoints:
